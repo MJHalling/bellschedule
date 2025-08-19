@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mark's Racing Schedule</title>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #2b2b2b; /* Charcoal background */
+    color: #e0e0e0; /* Neutral text for labels/times */
+  }
+  .schedule {
+    max-width: 600px;
+    margin: 40px auto;
+    border: 1px solid #444;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .block {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: background-color 0.3s ease;
+  }
+  .num-col {
+    width: 60px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-right: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* default number text color */
+  }
+  .label-col {
+    flex: 1;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+  <div class="schedule" id="schedule"></div>
+
+<script>
+  const blocks = [
+    { num: 1, label: "Away They Go...", start: "8:30 AM", end: "10:00 AM", silk: "#FF0100", numText: "#FFF" },
+    { num: 2, label: "Clubhouse Turn", start: "10:00 AM", end: "10:30 AM", silk: "#FFFFFF", numText: "#000" },
+    { num: 3, label: "Backstretch", start: "10:30 AM", end: "12:00 PM", silk: "#0000FF", numText: "#FFF" },
+    { num: 4, label: "Half-Mile Pole", start: "12:00 PM", end: "1:00 PM", silk: "#FFFF00", numText: "#000" },
+    { num: 5, label: "Far Turn", start: "1:00 PM", end: "2:30 PM", silk: "#008001", numText: "#FFF" },
+    { num: 6, label: "Top of the Stretch", start: "2:30 PM", end: "3:00 PM", silk: "#000000", numText: "#FFD700" },
+    { num: 7, label: "To the Wire", start: "3:00 PM", end: "4:30 PM", silk: "#FF6601", numText: "#000" }
+  ];
+
+  function getCurrentMinutes() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
+  function timeToMinutes(timeStr) {
+    const [time, meridian] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (meridian === "PM" && hours !== 12) hours += 12;
+    if (meridian === "AM" && hours === 12) hours = 0;
+    return hours * 60 + minutes;
+  }
+
+  function renderSchedule() {
+    const container = document.getElementById("schedule");
+    container.innerHTML = "";
+    const now = getCurrentMinutes();
+
+    blocks.forEach(block => {
+      const start = timeToMinutes(block.start);
+      const end = timeToMinutes(block.end);
+      const isActive = now >= start && now < end;
+      const minutesLeft = end - now;
+
+      const row = document.createElement("div");
+      row.className = "block";
+      if (isActive) {
+        row.style.backgroundColor = block.silk;
+        row.style.color = block.numText;
+      }
+
+      const numCol = document.createElement("div");
+      numCol.className = "num-col";
+      numCol.textContent = block.num;
+      numCol.style.backgroundColor = block.silk;
+      numCol.style.color = block.numText;
+
+      const labelCol = document.createElement("div");
+      labelCol.className = "label-col";
+      labelCol.innerHTML = `
+        <span>${block.start}–${block.end} • ${block.label}</span>
+        <span>${isActive ? `🏇 ${minutesLeft} min` : ""}</span>
+      `;
+
+      row.appendChild(numCol);
+      row.appendChild(labelCol);
+      container.appendChild(row);
+    });
+  }
+
+  renderSchedule();
+  setInterval(renderSchedule, 60000);
+</script>
+</body>
+</html>
