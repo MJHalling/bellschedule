@@ -10,6 +10,11 @@
     padding: 0;
     background: #2b2b2b; /* Charcoal background */
     color: #e0e0e0; /* Neutral text for labels/times */
+    animation: antiIdle 2m infinite; /* invisible pulse for anti-idle */
+  }
+  @keyframes antiIdle {
+    0%, 100% { opacity: 1 }
+    50% { opacity: 0.999 }
   }
   .schedule {
     max-width: 600px;
@@ -46,9 +51,6 @@
 </head>
 <body>
   <div class="schedule" id="schedule"></div>
-<audio autoplay loop>
-  <source src="https://github.com/DaGammla/keep-silk-open/raw/main/silence.mp3" type="audio/mpeg">
-</audio>
 
 <script>
   const blocks = [
@@ -110,6 +112,11 @@
       container.appendChild(row);
     });
   }
+
+  // Anti-idle DOM nudge every 2 minutes
+  setInterval(() => {
+    document.body.dataset.ping = Date.now();
+  }, 120000);
 
   renderSchedule();
   setInterval(renderSchedule, 60000);
