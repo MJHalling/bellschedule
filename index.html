@@ -46,16 +46,19 @@
 </head>
 <body>
   <div class="schedule" id="schedule"></div>
+<audio autoplay loop>
+  <source src="https://github.com/DaGammla/keep-silk-open/raw/main/silence.mp3" type="audio/mpeg">
+</audio>
 
 <script>
   const blocks = [
-    { num: 1, label: "Away They Go...", start: "8:30 AM", end: "10:00 AM", silk: "#FF0100", numText: "#FFF" },
-    { num: 2, label: "Clubhouse Turn", start: "10:00 AM", end: "10:30 AM", silk: "#FFFFFF", numText: "#000" },
-    { num: 3, label: "Backstretch", start: "10:30 AM", end: "12:00 PM", silk: "#0000FF", numText: "#FFF" },
-    { num: 4, label: "Half-Mile Pole", start: "12:00 PM", end: "1:00 PM", silk: "#FFFF00", numText: "#000" },
-    { num: 5, label: "Far Turn", start: "1:00 PM", end: "2:30 PM", silk: "#008001", numText: "#FFF" },
-    { num: 6, label: "Top of the Stretch", start: "2:30 PM", end: "3:00 PM", silk: "#000000", numText: "#FFD700" },
-    { num: 7, label: "To the Wire", start: "3:00 PM", end: "4:30 PM", silk: "#FF6601", numText: "#000" }
+    { num: 1, label: "1st Period", start: "8:30 AM", end: "10:00 AM", silk: "#FF0100", numText: "#FFF" },
+    { num: 2, label: "2nd Period", start: "10:00 AM", end: "10:30 AM", silk: "#FFFFFF", numText: "#000" },
+    { num: 3, label: "3rd Period", start: "10:30 AM", end: "12:00 PM", silk: "#0000FF", numText: "#FFF" },
+    { num: 4, label: "Lunch", start: "12:00 PM", end: "1:00 PM", silk: "#FFFF00", numText: "#000" },
+    { num: 5, label: "5th Period", start: "1:00 PM", end: "2:30 PM", silk: "#008001", numText: "#FFF" },
+    { num: 6, label: "6th Period", start: "2:30 PM", end: "3:00 PM", silk: "#000000", numText: "#FFD700" },
+    { num: 7, label: "7th Period", start: "3:00 PM", end: "4:30 PM", silk: "#FF6601", numText: "#000" }
   ];
 
   function getCurrentMinutes() {
