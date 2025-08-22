@@ -8,9 +8,9 @@
     font-family: sans-serif;
     margin: 0;
     padding: 0;
-    background: #2b2b2b; /* Charcoal background */
-    color: #e0e0e0; /* Neutral text for labels/times */
-    animation: antiIdle 2m infinite; /* invisible pulse for anti-idle */
+    background: #2b2b2b;
+    color: #e0e0e0;
+    animation: antiIdle 2m infinite;
   }
   @keyframes antiIdle {
     0%, 100% { opacity: 1 }
@@ -38,7 +38,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white; /* default number text color */
+    color: white;
   }
   .label-col {
     flex: 1;
@@ -46,6 +46,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
 </head>
@@ -63,29 +66,48 @@
     { num: 7, label: "7th Period", start: "3:00 PM", end: "4:30 PM", silk: "#FF6601", numText: "#000" }
   ];
 
-  function getCurrentMinutes() {
+  function getCurrentTimeInSeconds() {
     const now = new Date();
-    return now.getHours() * 60 + now.getMinutes();
+    return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   }
 
-  function timeToMinutes(timeStr) {
+  function timeToSeconds(timeStr) {
     const [time, meridian] = timeStr.split(" ");
     let [hours, minutes] = time.split(":").map(Number);
     if (meridian === "PM" && hours !== 12) hours += 12;
     if (meridian === "AM" && hours === 12) hours = 0;
-    return hours * 60 + minutes;
+    return hours * 3600 + minutes * 60;
+  }
+
+  function formatCountdown(secondsLeft) {
+    const m = Math.floor(secondsLeft / 60);
+    return `${m}m`;
   }
 
   function renderSchedule() {
     const container = document.getElementById("schedule");
     container.innerHTML = "";
-    const now = getCurrentMinutes();
+    const now = getCurrentTimeInSeconds();
 
     blocks.forEach(block => {
-      const start = timeToMinutes(block.start);
-      const end = timeToMinutes(block.end);
+      const start = timeToSeconds(block.start);
+      const end = timeToSeconds(block.end);
       const isActive = now >= start && now < end;
-      const minutesLeft = end - now;
+      const secondsLeft = end - now;
+      const totalSeconds = end - start;
+
+      const countdown = formatCountdown(secondsLeft);
+
+      const segmentSize = 900; // 15 minutes in seconds
+      const totalSegments = Math.max(1, Math.floor(totalSeconds / segmentSize));
+      const horseSegment = Math.min(totalSegments - 1, Math.floor(secondsLeft / segmentSize));
+
+      let progressLine = "| ";
+      for (let i = 0; i < totalSegments; i++) {
+        progressLine += i === horseSegment ? "🏇" : "-";
+        progressLine += " ";
+      }
+      progressLine += "|";
 
       const row = document.createElement("div");
       row.className = "block";
@@ -104,7 +126,7 @@
       labelCol.className = "label-col";
       labelCol.innerHTML = `
         <span>${block.start}–${block.end} • ${block.label}</span>
-        <span>${isActive ? `🏇 ${minutesLeft} min` : ""}</span>
+        <span>${isActive ? `${countdown} ${progressLine}` : ""}</span>
       `;
 
       row.appendChild(numCol);
@@ -113,14 +135,15 @@
     });
   }
 
-  // Anti-idle DOM nudge every 2 minutes
   setInterval(() => {
     document.body.dataset.ping = Date.now();
   }, 120000);
 
   renderSchedule();
-  setInterval(renderSchedule, 60000);
+  setInterval(renderSchedule, 1000);
 </script>
 </body>
 </html>
+
+
 
